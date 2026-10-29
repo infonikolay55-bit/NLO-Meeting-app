@@ -1,4 +1,4 @@
-name: Deploy Vite React to AWS EC2
+name: Deploy Vite React to DigitalOcean
 
 on:
   push:
@@ -11,17 +11,17 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Deploy to EC2
+      - name: Deploy to server
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
-            cd ~/hubmyanmarmeeting
+            cd ~/NLO-Meeting-app
             git pull origin main
             npm install
             npm run build
-            sudo mkdir -p /var/www/meeting
-            sudo cp -r dist/* /var/www/meeting/
+            sudo mkdir -p /var/www/NLO-Meeting-app
+            sudo cp -r dist/* /var/www/NLO-Meeting-app/
             sudo systemctl reload nginx

@@ -43,13 +43,13 @@ export default function Header({ user, profileImage, setProfileImage }) {
       <div className="flex sm:hidden items-center gap-2.5">
         <div className="w-8 h-8 rounded-lg bg-orange-100/80 flex items-center justify-center shrink-0">
           <img 
-            src="/hubmyanmar.jpg" 
-            alt="HUB Myanmar Logo" 
+            src="/logo.webp" 
+            alt="NLO-Meeting-app Logo" 
             className="w-8 h-8 object-contain rounded" 
           />
         </div>
         <div className="flex flex-col">
-          <span className="font-bold text-sm text-gray-900 leading-tight">Hub Myanmar</span>
+          <span className="font-bold text-sm text-gray-900 leading-tight">NLO-Meeting-app</span>
           <span className="text-[10px] font-semibold text-gray-400 tracking-wider uppercase leading-tight">MEETING HUB</span>
         </div>
       </div>

@@ -93,12 +93,12 @@ export default function Sidebar({ user, profileImage }) {
       <aside className="hidden md:flex w-[220px] bg-white border-r border-gray-200 flex-col shrink-0 h-screen">
         <div className="p-5 flex items-center gap-3">
           <img 
-            src="/hubmyanmar.jpg" 
-            alt="HUB Myanmar Logo" 
+            src="/logo.webp" 
+            alt="NLO-Meeting-app Logo" 
             className="w-8 h-8 object-contain rounded" 
           />
           <div>
-            <h1 className="font-bold text-sm text-gray-900 leading-tight">Hub Myanmar</h1>
+            <h1 className="font-bold text-sm text-gray-900 leading-tight">NLO-Meeting-app</h1>
             <p className="text-[10px] font-bold text-gray-500 tracking-wider">MEETING HUB</p>
           </div>
         </div>

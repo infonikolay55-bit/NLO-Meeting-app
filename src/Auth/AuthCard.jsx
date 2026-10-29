@@ -116,7 +116,8 @@ export default function AuthCard({ setCurrentUser }) {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             name: formData.name,
-            position: formData.position,
+            // POSITION-ROLE-DISABLED — re-enable later
+            // position: formData.position,
             email: formData.email,
             password: formData.password,
           }),
@@ -206,6 +207,8 @@ export default function AuthCard({ setCurrentUser }) {
 
             {!isLogin && (
               <div className="relative" ref={dropdownRef}>
+                {/* POSITION-ROLE-DISABLED — re-enable later */}
+                {/*
                 <label className="block text-xs font-semibold uppercase tracking-wider text-[#777169] mb-1.5">
                   Position / Role
                 </label>
@@ -222,6 +225,7 @@ export default function AuthCard({ setCurrentUser }) {
                   placeholder="Type to search your position..."
                   className="w-full px-4 py-3 sm:py-2.5 rounded-md border border-[#e7e5e4] focus:outline-none focus:border-[#0c0a09] text-base sm:text-sm text-[#0c0a09] placeholder-[#a8a29e] transition-colors"
                 />
+                */}
                 
                 {/* Custom Autocomplete Dropdown Menu */}
                 {showDropdown && filteredPositions.length > 0 && (
