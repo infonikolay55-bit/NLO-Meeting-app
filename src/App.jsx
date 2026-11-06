@@ -144,7 +144,19 @@ export default function App() {
   useEffect(() => {
     const fetchUserFromDB = async () => {
       try {
-        const { data: userData } = await api.get('/users');
+        const token = localStorage.getItem('access_token');
+        if (!token) return;
+
+        const tokenPayloadSegment = token.split('.')[1];
+        if (!tokenPayloadSegment) return;
+
+        const base64Payload = tokenPayloadSegment.replace(/-/g, '+').replace(/_/g, '/');
+        const paddedPayload = base64Payload.padEnd(Math.ceil(base64Payload.length / 4) * 4, '=');
+        const tokenPayload = JSON.parse(atob(paddedPayload));
+        const userId = tokenPayload.sub;
+        if (!userId) return;
+
+        const { data: userData } = await api.get(`/users/${userId}`);
         setCurrentUser(userData);
       } catch (error) {
         console.error('Error fetching user from Database:', error);

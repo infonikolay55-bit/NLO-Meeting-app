@@ -7,9 +7,7 @@ import { clearAuthSession, isAccessTokenValid } from './utils/auth';
 export default function Dashboard({ currentUser }) {
   const location = useLocation();
   const [user, setUser] = useState(() => {
-    let storedUser = null;
-    try { storedUser = JSON.parse(localStorage.getItem('currentUser') || 'null'); } catch { /* invalid stored user */ }
-    let rawUser = currentUser || location.state?.user || storedUser;
+    let rawUser = currentUser || location.state?.user || null;
     if (Array.isArray(rawUser)) {
       rawUser = rawUser[0] || null;
     }
@@ -28,15 +26,12 @@ export default function Dashboard({ currentUser }) {
         normalizedUser = normalizedUser[0] || null;
       }
       setUser(normalizedUser);
-      if (normalizedUser) {
-        localStorage.setItem('currentUser', JSON.stringify(normalizedUser));
-      }
     }
   }, [currentUser, hasValidToken]);
 
   const [profileImage, setProfileImage] = useState(() => {
     if (user?.image) return user.image;
-    return localStorage.getItem('savedProfileImage') || null;
+    return null;
   });
 
   if (!hasValidToken || !user) return <Navigate to="/" replace state={{ from: location }} />;

@@ -23,7 +23,6 @@ export default function Header({ user, profileImage, setProfileImage }) {
       const base64String = reader.result;
       
       setProfileImage(base64String);
-      localStorage.setItem('savedProfileImage', base64String);
 
       try {
         setUploading(true);
