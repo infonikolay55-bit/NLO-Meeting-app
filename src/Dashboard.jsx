@@ -34,7 +34,9 @@ export default function Dashboard({ currentUser }) {
     return null;
   });
 
-  if (!hasValidToken || !user) return <Navigate to="/" replace state={{ from: location }} />;
+  if (!hasValidToken) return <Navigate to="/" replace state={{ from: location }} />;
+
+  if (!user) return null;
 
   return (
     <div className="flex h-screen bg-[#F8FAFC] font-sans text-slate-800 overflow-hidden">
