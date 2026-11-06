@@ -22,6 +22,6 @@ jobs:
             git pull origin main
             npm install
             npm run build
-            sudo mkdir -p /var/www/NLO-Meeting-app
-            sudo cp -r dist/* /var/www/NLO-Meeting-app/
+            sudo mkdir -p /var/www/nlo-meeting-app
+            sudo cp -r dist/* /var/www/nlo-meeting-app/
             sudo systemctl reload nginx
