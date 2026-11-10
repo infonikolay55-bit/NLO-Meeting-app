@@ -1,74 +1,125 @@
-import React, { useEffect, useState } from 'react';
-import api from '../../api';
+import React, { useRef, useState } from 'react';
+import SettingsPanelHeader from './SettingsPanelHeader';
 import SettingsField from './SettingsField';
+import SettingsBadge from './SettingsBadge';
+import api from '../../api';
 
-const getError = (error) => error.response?.data?.detail || error.response?.data?.message || error.message || 'Something went wrong.';
-const imageToDataUrl = (file) => new Promise((resolve, reject) => {
-  const reader = new FileReader();
-  reader.onload = () => resolve(reader.result);
-  reader.onerror = () => reject(new Error('Could not read the selected image.'));
-  reader.readAsDataURL(file);
-});
-
-export default function ProfilePanel({ user, profileImage, setProfileImage }) {
-  const [name, setName] = useState(user?.name || user?.fullName || user?.full_name || '');
-  const [position, setPosition] = useState(user?.position || '');
-  const [stagedImage, setStagedImage] = useState(null);
-  const [preview, setPreview] = useState(profileImage || user?.image || '');
-  const [message, setMessage] = useState('');
-  const [error, setError] = useState('');
+export default function ProfilePanel({ currentUser, profileImage, setProfileImage }) {
+  const user = Array.isArray(currentUser) ? currentUser[0] : currentUser;
+  const name = user?.name || user?.fullName || '';
+  const position = user?.position || '';
+  const email = user?.email || '';
+  const role = user?.role || 'Member';
   const [saving, setSaving] = useState(false);
+  const [stagedPhoto, setStagedPhoto] = useState(null);
+  const [saved, setSaved] = useState(false);
+  const fileInputRef = useRef(null);
+  const formRef = useRef(null);
+  const displayName = user?.name || user?.fullName || 'User';
 
-  useEffect(() => {
-    setName(user?.name || user?.fullName || user?.full_name || '');
-    setPosition(user?.position || '');
-  }, [user]);
-
-  const handleImageChange = async (event) => {
-    const file = event.target.files?.[0];
+  const handlePhotoSelection = (event) => {
+    const file = event.target.files[0];
     if (!file) return;
-    try {
-      const dataUrl = await imageToDataUrl(file);
-      setStagedImage(dataUrl);
-      setPreview(dataUrl);
-      setError('');
-      setMessage('');
-    } catch (err) { setError(getError(err)); }
+
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setStagedPhoto(reader.result);
+      setSaved(false);
+    };
+
+    reader.readAsDataURL(file);
   };
 
   const handleSave = async (event) => {
     event.preventDefault();
-    setSaving(true); setError(''); setMessage('');
+    const [nameInput, positionInput] = formRef.current.querySelectorAll('input[type="text"]');
+    const updatedName = nameInput?.value ?? name;
+    const updatedPosition = positionInput?.value ?? position;
+
+    setSaving(true);
+    setSaved(false);
     try {
-      await api.put(`/users/${user.id}`, { name, position });
-      if (stagedImage) {
-        await api.put('/users/profile/image', { image: stagedImage });
-        setProfileImage(stagedImage);
+      if (stagedPhoto) {
+        setProfileImage(stagedPhoto);
+        await api.patch('/auth/update-image', { image: stagedPhoto });
+        setStagedPhoto(null);
       }
-      setMessage('Profile saved successfully.');
-    } catch (err) { setError(getError(err)); }
-    finally { setSaving(false); }
+
+      if (user?.id !== undefined && user?.id !== null) {
+        await api.put(`/users/${user.id}`, { name: updatedName, position: updatedPosition });
+      }
+
+      setSaved(true);
+    } catch (err) {
+      console.error('Error saving profile:', err);
+    } finally {
+      setSaving(false);
+    }
   };
 
+  const photoAction = (
+    <>
+      <input
+        type="file"
+        accept="image/*"
+        ref={fileInputRef}
+        onChange={handlePhotoSelection}
+        className="hidden"
+      />
+      <button
+        type="button"
+        onClick={() => fileInputRef.current?.click()}
+        disabled={saving}
+        aria-label="Change profile photo"
+        title="Change profile photo"
+        className="h-10 w-10 shrink-0 overflow-hidden rounded-full border border-gray-200 shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#564BFF] focus-visible:ring-offset-2 disabled:cursor-wait"
+      >
+        <img
+          src={stagedPhoto || profileImage || `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 40 40"><rect width="40" height="40" fill="%234f46e5"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="%23ffffff" font-size="16" font-family="sans-serif">${displayName.charAt(0).toUpperCase()}</text></svg>`}
+          alt="Profile photo"
+          className="h-full w-full object-cover"
+        />
+      </button>
+    </>
+  );
+
   return (
-    <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
-      <h2 className="text-lg font-bold text-slate-900">Profile</h2>
-      <p className="mt-1 text-sm text-slate-500">Update your profile information.</p>
-      <form onSubmit={handleSave} className="mt-5 space-y-4">
-        <div className="flex items-center gap-4">
-          {preview ? <img src={preview} alt="Profile preview" className="h-16 w-16 rounded-full border border-slate-200 object-cover" /> :
-            <span className="flex h-16 w-16 items-center justify-center rounded-full bg-indigo-600 text-xl font-semibold text-white">{name.trim().charAt(0).toUpperCase()}</span>}
-          <label className="text-sm font-semibold text-indigo-700">Choose profile image
-            <input type="file" accept="image/*" onChange={handleImageChange} className="mt-1 block max-w-full text-xs text-slate-500" />
-          </label>
+    <>
+      <SettingsPanelHeader
+        title="Profile"
+        description="Your account information."
+        titleAction={photoAction}
+      />
+
+      <form ref={formRef} onSubmit={handleSave}>
+        <div className="grid gap-4 sm:grid-cols-2">
+          <SettingsField label="Name" value={name} placeholder="Name" />
+          <SettingsField label="Position" value={position} placeholder="Position" />
+
+          <div className="min-w-0">
+            <h3 className="text-sm font-semibold text-slate-700">Email</h3>
+            <p className="mt-1.5 min-h-11 break-all rounded-xl border border-slate-200 bg-slate-50 px-3 py-3 text-sm text-slate-600">{email}</p>
+            <p className="mt-1 text-xs leading-4 text-slate-500">Email cannot be changed here.</p>
+          </div>
+
+          <div className="min-w-0">
+            <h3 className="text-sm font-semibold text-slate-700">Role</h3>
+            <div className="mt-1.5 min-h-11"><SettingsBadge>{role}</SettingsBadge></div>
+            <p className="mt-1 text-xs leading-4 text-slate-500">Roles are managed in Access &amp; roles.</p>
+          </div>
         </div>
-        <SettingsField label="Name" value={name} onChange={(event) => setName(event.target.value)} required />
-        <SettingsField label="Position" value={position} onChange={(event) => setPosition(event.target.value)} />
-        <SettingsField label="Email" value={user?.email || ''} disabled readOnly />
-        {error && <p role="alert" className="text-sm text-red-700">{error}</p>}
-        {message && <p role="status" className="text-sm text-emerald-700">{message}</p>}
-        <button type="submit" disabled={saving} className="rounded-xl bg-[#564BFF] px-4 py-2.5 text-sm font-semibold text-white disabled:opacity-50">{saving ? 'Saving…' : 'Save profile'}</button>
+
+        <div className="mt-5">
+          <button
+            type="submit"
+            disabled={saving}
+            className="flex min-h-12 w-full items-center justify-center rounded-xl bg-[#564BFF] px-4 py-3 text-sm font-semibold text-white transition-colors hover:bg-[#4539ed] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#564BFF] focus-visible:ring-offset-2 disabled:cursor-wait disabled:opacity-60"
+          >
+            {saving ? 'Saving…' : 'Save changes'}
+          </button>
+          {saved && <p role="status" className="mt-2 text-sm font-medium text-emerald-700">Saved</p>}
+        </div>
       </form>
-    </section>
+    </>
   );
 }

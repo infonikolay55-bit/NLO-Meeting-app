@@ -1,13 +1,18 @@
 import React from 'react';
 
-export default function SettingsField({ label, type = 'text', value, onChange, defaultValue, disabled = false, ...inputProps }) {
-  const controlled = value !== undefined && (typeof onChange === 'function' || disabled || inputProps.readOnly);
+export default function SettingsField({ label, value, onChange, type = 'text', options, placeholder, disabled = false }) {
+  const className = 'mt-1.5 w-full rounded-xl border border-slate-200 bg-white px-3 py-3 text-sm text-slate-800 outline-none focus:border-[#564BFF] focus:ring-1 focus:ring-[#564BFF] disabled:cursor-not-allowed disabled:bg-slate-100 disabled:text-slate-500 disabled:opacity-50';
+  const controlledProps = onChange !== undefined ? { value, onChange } : { defaultValue: value };
   return (
-    <label className="block space-y-1.5">
-      <span className="text-sm font-medium text-slate-700">{label}</span>
-      <input {...inputProps} type={type} disabled={disabled}
-        {...(controlled ? { value, ...(onChange ? { onChange } : {}) } : { defaultValue })}
-        className={`w-full rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-sm text-slate-800 outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/15 disabled:bg-slate-100 disabled:text-slate-500 ${inputProps.className || ''}`} />
+    <label className="block text-sm font-semibold text-slate-700">
+      {label}
+      {options ? (
+        <select className={className} {...controlledProps} disabled={disabled}>
+          {options.map((option) => <option key={option}>{option}</option>)}
+        </select>
+      ) : (
+        <input type={type} className={className} {...controlledProps} placeholder={placeholder} disabled={disabled} />
+      )}
     </label>
   );
 }
