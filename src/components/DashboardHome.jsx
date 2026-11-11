@@ -99,12 +99,14 @@ export default function DashboardHome({
     const oneMonthAgoStr = `${oneMonthAgo.getFullYear()}-${String(oneMonthAgo.getMonth() + 1).padStart(2, '0')}-${String(oneMonthAgo.getDate()).padStart(2, '0')}`;
 
     const today = bookedMeetings.filter(m => {
+      if (String(m.status || '').trim().toLowerCase() === 'rejected') return false;
       const mDate = formatDisplayValue(m.date || m.meeting_date);
       if (!mDate) return false;
       return mDate.includes(todayStr) || todayStr.includes(mDate);
     });
 
     const upcoming = bookedMeetings.filter(m => {
+      if (String(m.status || '').trim().toLowerCase() === 'rejected') return false;
       const mDate = formatDisplayValue(m.date || m.meeting_date);
       return mDate && mDate > todayStr;
     });

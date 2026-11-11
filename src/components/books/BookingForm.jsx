@@ -144,6 +144,7 @@ export default function BookingForm({ data, setData, onBook, onClear, isLoading,
   const isRoomBlocked = (roomIdentifier, roomName) => {
     const validBookings = bookedMeetings || [];
     const roomBookings = validBookings.filter(b => {
+      if (String(b.status || '').trim().toLowerCase() === 'rejected') return false;
       const isSameRoom = b.room === roomName || b.room_id === Number(roomIdentifier);
       const bookingDate = b.meeting_date || b.date;
       const isSameDate = !data?.date || !bookingDate || bookingDate === data?.date;

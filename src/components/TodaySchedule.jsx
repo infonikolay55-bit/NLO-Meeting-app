@@ -234,6 +234,7 @@ export default function TodaySchedule({
   const rawList = todayMeetings.length > 0 ? todayMeetings : bookedMeetings;
   
   const todayFilteredMeetings = rawList.filter(m => {
+    if (String(m.status || '').trim().toLowerCase() === 'rejected') return false;
     const rawDate = m.date || m.meeting_date || '';
     if (!rawDate) return false;
     return String(rawDate).includes(todayDate) || todayDate.includes(String(rawDate));

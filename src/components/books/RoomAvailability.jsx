@@ -142,6 +142,7 @@ export default function RoomAvailability({ data, setData, bookedMeetings = [], r
             const roomCapacity = room.capacity || room.room_capacity;
 
             const roomBookings = activeBookings.filter(b => {
+              if (String(b.status || '').trim().toLowerCase() === 'rejected') return false;
               const info = getBookingInfo(b);
               const isIdMatch = roomId && (info.roomId === roomId);
               const isNameMatch = roomName && (info.roomName.toLowerCase() === roomName.toLowerCase());
