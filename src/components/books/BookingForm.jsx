@@ -337,7 +337,6 @@ export default function BookingForm({ data, setData, onBook, onClear, isLoading,
               >
                 <option value="" disabled>Select Platform</option>
                 <option value="Zoom">Zoom</option>
-                <option value="Zoho Cliq">Zoho Cliq</option>
                 <option value="Other">Other</option>
               </select>
               <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none text-gray-400">
@@ -494,15 +493,6 @@ export default function BookingForm({ data, setData, onBook, onClear, isLoading,
             </ul>
           )}
         </div>
-      </div>
-
-      {/* Checkbox */}
-      <div className="flex items-center gap-2.5 pt-1">
-        <input 
-          type="checkbox" id="invite-cliq" name="inviteCliq" checked={data?.inviteCliq || false} onChange={handleChange} 
-          className="w-4 h-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500/20 cursor-pointer accent-[#4F39F6]" 
-        />
-        <label htmlFor="invite-cliq" className="text-sm font-medium text-gray-700 cursor-pointer select-none">Send invitation via Zoho Cliq</label>
       </div>
 
       {/* Action Buttons */}

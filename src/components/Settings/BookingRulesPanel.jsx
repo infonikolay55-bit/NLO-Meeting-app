@@ -3,7 +3,6 @@ import { Settings as SettingsIcon } from 'lucide-react';
 import SettingsPanelHeader from './SettingsPanelHeader';
 import SettingsSwitch from './SettingsSwitch';
 import SettingsField from './SettingsField';
-import SettingsBadge from './SettingsBadge';
 import api from '../../api';
 
 function ChoicePill({ label, selected, onClick, disabled = false }) {
@@ -152,9 +151,6 @@ export default function BookingRulesPanel({ currentUser }) {
           </div>
         </RuleRow>
 
-        <RuleRow label="Calendar integration status">
-          <SettingsBadge tone="orange">Needs attention</SettingsBadge>
-        </RuleRow>
       </div>
 
       <button

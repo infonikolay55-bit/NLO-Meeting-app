@@ -22,8 +22,7 @@ const initialData = {
   meetingType: "Face to Face",
   platform: "",
   room: "",
-  participants: [],
-  inviteCliq: true
+  participants: []
 };
 
 export default function BookMeeting({ setBookedMeetings, bookedMeetings = [], currentUser }) {
@@ -128,7 +127,6 @@ export default function BookMeeting({ setBookedMeetings, bookedMeetings = [], cu
       meeting_type: data.meetingType.toLowerCase() === "face to face" ? "face to face" : "online",
       platform: data.meetingType.toLowerCase() === "online" ? (data.platform || null) : null,
       room_id: data.meetingType.toLowerCase() === "face to face" && data.room ? Number(data.room) : null,
-      invite_cliq: Boolean(data.inviteCliq),
       participants: (data.participants || []).map(p => ({
         email: p.email,
         name: p.name || "",
