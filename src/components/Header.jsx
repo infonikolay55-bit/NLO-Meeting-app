@@ -1,6 +1,6 @@
 import React, { useRef, useState } from 'react';
-import { Bell } from 'lucide-react';
 import api from '../api';
+import NotificationBell from './NotificationBell';
 
 export default function Header({ user, profileImage, setProfileImage }) {
   const displayName = user?.name || user?.fullName || "User";
@@ -58,10 +58,7 @@ export default function Header({ user, profileImage, setProfileImage }) {
           {today}
         </span>
 
-        <button className="relative p-1 text-gray-400 hover:text-gray-600">
-          <Bell className="w-5 h-5 sm:w-6 sm:h-6 text-gray-600" />
-          <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full border border-white"></span>
-        </button>
+        <NotificationBell />
         
         <div className="relative">
           <input 
