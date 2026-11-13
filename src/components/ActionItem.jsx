@@ -20,6 +20,7 @@ const toTask = (item, meetings) => {
     assignee,
     date: item.due_date ? `Due: ${item.due_date}` : `Created: ${item.created_at ? new Date(item.created_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' }) : ''}`,
     due_date: item.due_date,
+    created_at: item.created_at,
     meeting: meeting?.title || `Meeting #${item.meeting_id}`,
     priority: item.priority || 'Medium',
     avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(assignee)}&background=random`,
@@ -123,15 +124,19 @@ export default function ActionItem({ meetingData: propMeetingData }) {
       const matchesSearch = !query || [task.title, task.meeting, task.assignee, task.priority]
         .some((value) => value?.toLowerCase().includes(query));
       let matchesDate = true;
-      if (task.due_date && dateRange.start && dateRange.end) {
-        const rawDate = task.due_date;
-        const taskDate = new Date(rawDate);
-        const startDate = new Date(dateRange.start);
-        const endDate = new Date(dateRange.end);
-        taskDate.setHours(0, 0, 0, 0);
-        startDate.setHours(0, 0, 0, 0);
-        endDate.setHours(23, 59, 59, 999);
-        if (!isNaN(taskDate.getTime())) matchesDate = taskDate >= startDate && taskDate <= endDate;
+      if (dateRange.start && dateRange.end) {
+        const relevantDate = task.due_date || task.created_at;
+        if (relevantDate) {
+          const taskDate = new Date(relevantDate);
+          const startDate = new Date(dateRange.start);
+          const endDate = new Date(dateRange.end);
+          taskDate.setHours(0, 0, 0, 0);
+          startDate.setHours(0, 0, 0, 0);
+          endDate.setHours(23, 59, 59, 999);
+          matchesDate = !isNaN(taskDate.getTime()) && taskDate >= startDate && taskDate <= endDate;
+        } else {
+          matchesDate = false;
+        }
       }
       return matchesSearch && matchesDate;
     }),
