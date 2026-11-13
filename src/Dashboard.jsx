@@ -34,6 +34,10 @@ export default function Dashboard({ currentUser }) {
     return null;
   });
 
+  useEffect(() => {
+    if (user?.image) setProfileImage(user.image);
+  }, [user?.image]);
+
   if (!hasValidToken) return <Navigate to="/" replace state={{ from: location }} />;
 
   if (!user) return null;
