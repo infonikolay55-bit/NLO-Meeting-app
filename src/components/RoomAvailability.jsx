@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ChevronRight, Users, Calendar, Lock } from 'lucide-react';
 import baganImg from '../assets/meetingroom1.jpeg';
@@ -34,38 +34,13 @@ const convertTimeToMinutes = (timeStr) => {
 export default function RoomAvailability({ bookedMeetings = [], meetingRooms = [], usersList = [] }) {
   const navigate = useNavigate();
 
-  const [sessions, setSessions] = useState(() => {
-    try {
-      const saved = localStorage.getItem('meetingSessions');
-      return saved ? JSON.parse(saved) : {};
-    } catch (e) {
-      return {};
-    }
-  });
+  const [sessions, setSessions] = useState({});
 
   const defaultImages = [baganImg, MDImg, BaungImg, BodImg];
   const baseRooms = meetingRooms.map((room, index) => ({
     ...room,
     image: room.image || defaultImages[index % defaultImages.length] 
   }));
-
-  useEffect(() => {
-    const handleStorageChange = () => {
-      try {
-        const saved = localStorage.getItem('meetingSessions');
-        if (saved) setSessions(JSON.parse(saved));
-      } catch (e) {}
-    };
-
-    handleStorageChange();
-    window.addEventListener('storage', handleStorageChange);
-    window.addEventListener('sync-meeting-sessions', handleStorageChange);
-
-    return () => {
-      window.removeEventListener('storage', handleStorageChange);
-      window.removeEventListener('sync-meeting-sessions', handleStorageChange);
-    };
-  }, []);
 
   const todayStr = getTodayDateString();
   const now = new Date();

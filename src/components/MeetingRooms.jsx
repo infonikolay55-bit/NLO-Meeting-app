@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
   Users, 
@@ -204,15 +204,7 @@ export default function MeetingRooms({
   const [filter, setFilter] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
   
-  const [sessions, setSessions] = useState(() => {
-    try {
-      const saved = localStorage.getItem('meetingSessions');
-      const parsed = saved ? JSON.parse(saved) : {};
-      return parsed && typeof parsed === 'object' ? parsed : {};
-    } catch (e) {
-      return {};
-    }
-  });
+  const [sessions, setSessions] = useState({});
 
   const safeBookedMeetings = Array.isArray(bookedMeetings) ? bookedMeetings : [];
   const safeMeetingRooms = Array.isArray(meetingRooms) ? meetingRooms : [];
@@ -223,27 +215,6 @@ export default function MeetingRooms({
     ...room,
     image: room?.image || defaultImages[index % defaultImages.length] 
   }));
-
-  useEffect(() => {
-    const handleStorageChange = () => {
-      try {
-        const saved = localStorage.getItem('meetingSessions');
-        if (saved) {
-          const parsed = JSON.parse(saved);
-          if (parsed && typeof parsed === 'object') setSessions(parsed);
-        }
-      } catch (e) {}
-    };
-
-    handleStorageChange();
-    window.addEventListener('storage', handleStorageChange);
-    window.addEventListener('sync-meeting-sessions', handleStorageChange);
-
-    return () => {
-      window.removeEventListener('storage', handleStorageChange);
-      window.removeEventListener('sync-meeting-sessions', handleStorageChange);
-    };
-  }, []);
 
   const getMeetingOrganizer = (data) => {
     if (!data) return 'Unknown Organizer';
