@@ -86,7 +86,7 @@ export default function Sidebar({ user, profileImage }) {
           />
           <div>
             <h1 className="font-bold text-sm text-gray-900 leading-tight">NLO-Meeting-app</h1>
-            <p className="text-[10px] font-bold text-gray-500 tracking-wider">MEETING HUB</p>
+            <p className="text-[10px] font-bold text-gray-500 tracking-wider">MEETING APP</p>
           </div>
         </div>
         

@@ -25,7 +25,7 @@ export default function Header({ user, profileImage, setProfileImage }) {
         </div>
         <div className="flex flex-col">
           <span className="font-bold text-sm text-gray-900 leading-tight">NLO-Meeting-app</span>
-          <span className="text-[10px] font-semibold text-gray-400 tracking-wider uppercase leading-tight">MEETING HUB</span>
+          <span className="text-[10px] font-semibold text-gray-400 tracking-wider uppercase leading-tight">MEETING APP</span>
         </div>
       </div>
       <div className="hidden sm:block"></div>
