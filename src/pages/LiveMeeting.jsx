@@ -1174,6 +1174,7 @@ export default function LiveMeeting({
         src={audioUrl || undefined}
         hidden
         onError={(event) => console.error('[audio] player source error:', event.currentTarget.error, event.currentTarget.currentSrc)}
+        onLoadedMetadata={(event) => setAudioDuration(event.currentTarget.duration)}
         onPlay={() => setIsAudioPlaying(true)}
         onPause={() => setIsAudioPlaying(false)}
         onEnded={onPlaybackEnded}
