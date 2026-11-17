@@ -34,8 +34,10 @@ export default function App() {
       }
     };
 
-    fetchMeetingsFromDB();
-  }, []);
+    if (currentUser || localStorage.getItem('access_token')) {
+      fetchMeetingsFromDB();
+    }
+  }, [currentUser]);
 
   const fetchSessionsFromDB = async () => {
     try {
@@ -71,7 +73,9 @@ export default function App() {
   };
 
   useEffect(() => {
-    fetchSessionsFromDB();
+    if (currentUser || localStorage.getItem('access_token')) {
+      fetchSessionsFromDB();
+    }
 
     const handleSessionSync = () => {
       fetchSessionsFromDB();
@@ -82,7 +86,7 @@ export default function App() {
     return () => {
       window.removeEventListener('sync-meeting-sessions', handleSessionSync);
     };
-  }, []);
+  }, [currentUser]);
 
   const saveMeetingSession = async (meetingId, sessionData) => {
     try {
