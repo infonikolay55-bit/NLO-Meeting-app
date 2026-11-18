@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { FileText, HardDrive, CalendarClock, Music2 } from 'lucide-react';
 import SettingsPanelHeader from './SettingsPanelHeader';
 import SettingsField from './SettingsField';
+import api from '../../api';
 
 function SettingsRow({ icon: Icon, label, description, children }) {
   return (
@@ -20,6 +21,38 @@ function SettingsRow({ icon: Icon, label, description, children }) {
 
 export default function MeetingRecordsPanel({ currentUser }) {
   const disabled = currentUser?.role !== 'admin';
+  const [storageLabel, setStorageLabel] = useState('…');
+
+  useEffect(() => {
+    let active = true;
+
+    api.get('/meeting-records/storage')
+      .then(({ data }) => {
+        if (!active) return;
+        const totalBytes = data?.total_bytes;
+        if (!Number.isFinite(totalBytes) || totalBytes < 0) {
+          setStorageLabel('—');
+          return;
+        }
+
+        const units = ['B', 'KB', 'MB', 'GB'];
+        let size = totalBytes;
+        let unitIndex = 0;
+        while (size >= 1024 && unitIndex < units.length - 1) {
+          size /= 1024;
+          unitIndex += 1;
+        }
+        setStorageLabel(`${unitIndex === 0 ? size : size.toFixed(1)} ${units[unitIndex]}`);
+      })
+      .catch(() => {
+        if (active) setStorageLabel('—');
+      });
+
+    return () => {
+      active = false;
+    };
+  }, []);
+
   return (
     <>
       <SettingsPanelHeader
@@ -31,7 +64,7 @@ export default function MeetingRecordsPanel({ currentUser }) {
 
       <div className="divide-y divide-slate-100">
         <SettingsRow icon={HardDrive} label="Storage used">
-          <span>1.2 GB of recordings</span>
+          <span>{storageLabel} of recordings</span>
         </SettingsRow>
 
         <SettingsRow
